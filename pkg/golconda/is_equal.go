@@ -1,14 +1,13 @@
 package golconda
 
 import (
-	golconda "LucaRainone/golconda/pkg/golconda"
 	"fmt"
 	"reflect"
 	"strings"
 )
 
-func IsEqual(field string, value interface{}) golconda.Operator {
-	operator := golconda.Operator{}
+func IsEqual(field string, value interface{}) Operator {
+	operator := Operator{}
 	if value != nil {
 
 		t := reflect.TypeOf(value).Kind()
