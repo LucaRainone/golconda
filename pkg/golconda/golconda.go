@@ -8,7 +8,12 @@ import (
 type Condition struct {
 	mode string
 	ops  []string
-	vals []string
+	vals []interface{}
+}
+
+type Operator struct {
+	Expression string
+	Vals       []interface{}
 }
 
 func NewAnd() *Condition {
@@ -23,9 +28,9 @@ func NewOr() *Condition {
 	return &c
 }
 
-func (c *Condition) IsEqual(field string, value string) *Condition {
-	c.ops = append(c.ops, fmt.Sprintf("%s = ?", field))
-	c.vals = append(c.vals, value)
+func (c *Condition) Append(op Operator) *Condition {
+	c.ops = append(c.ops, op.Expression)
+	c.vals = append(c.vals, op.Vals...)
 	return c
 }
 
@@ -43,6 +48,6 @@ func (c Condition) String() string {
 	return c.Build()
 }
 
-func (c *Condition) Values() []string {
+func (c *Condition) Values() []interface{} {
 	return c.vals
 }
