@@ -77,8 +77,6 @@ func TestFullUseCase(t *testing.T) {
 		t.Errorf("Expected vals[5] to be %d, got %s", filters.byDateEnd, vals[5])
 	}
 
-	// TODO other vals
-
 	rawQuery := fmt.Sprintf("SELECT * FROM users WHERE %s", condition.Build())
 
 	// ok this is pretty useless to test but...
