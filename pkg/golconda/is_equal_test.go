@@ -58,6 +58,17 @@ func TestIsEqualWithArray(t *testing.T) {
 	}
 }
 
+func TestIsEqualWithEmptyArray(t *testing.T) {
+	expected := "FALSE"
+	operator := IsEqual("id", []int{})
+	if operator.Expression != expected {
+		t.Errorf("Expected %s, got %s", expected, operator.Expression)
+	}
+	if len(operator.Vals) != 0 {
+		t.Errorf("Expected len of singleValue 0, got %d", len(operator.Vals))
+	}
+}
+
 func TestIsNotEqual(t *testing.T) {
 	expected := "id != ?"
 	operator := IsNotEqual("id", 42)
@@ -108,5 +119,16 @@ func TestIsNotEqualWithArray(t *testing.T) {
 
 	if fmt.Sprint(operator.Vals[1]) != "21" {
 		t.Errorf("Expected Values()[0] 21, got %d", operator.Vals[1])
+	}
+}
+
+func TestIsNotEqualWithEmptyArray(t *testing.T) {
+	expected := "TRUE"
+	operator := IsNotEqual("id", []int{})
+	if operator.Expression != expected {
+		t.Errorf("Expected %s, got %s", expected, operator.Expression)
+	}
+	if len(operator.Vals) != 0 {
+		t.Errorf("Expected len of singleValue 0, got %d", len(operator.Vals))
 	}
 }

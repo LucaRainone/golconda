@@ -18,14 +18,26 @@ func isEqual(field string, value interface{}, isNot bool) Operator {
 			if isNot {
 				sqlOperator = "NOT IN"
 			}
+
 			s := reflect.ValueOf(value)
-			_vals := make([]interface{}, 0)
-			valuesIn := buildQuestionMark(s.Len())
-			operator.Expression = fmt.Sprintf("%s "+sqlOperator+" (%s)", field, valuesIn)
-			for i := 0; i < s.Len(); i++ {
-				_vals = append(_vals, s.Index(i).Interface())
+			if s.Len() == 0 {
+				if isNot {
+					operator.Expression = "TRUE"
+				} else {
+					operator.Expression = "FALSE"
+				}
+			} else {
+				_vals := make([]interface{}, 0)
+
+				valuesIn := buildQuestionMark(s.Len())
+				operator.Expression = fmt.Sprintf("%s "+sqlOperator+" (%s)", field, valuesIn)
+
+				for i := 0; i < s.Len(); i++ {
+					_vals = append(_vals, s.Index(i).Interface())
+				}
+
+				operator.Vals = _vals
 			}
-			operator.Vals = _vals
 		} else {
 			sqlOperator := "="
 			if isNot {
