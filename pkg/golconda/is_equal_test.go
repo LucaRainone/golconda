@@ -5,10 +5,6 @@ import (
 	"testing"
 )
 
-func interface2string(a interface{}) string {
-	return fmt.Sprint(a)
-}
-
 func TestIsEqual(t *testing.T) {
 	expected := "id = ?"
 	operator := IsEqual("id", 42)
@@ -21,7 +17,7 @@ func TestIsEqual(t *testing.T) {
 		t.Errorf("Expected len of singleValue 1, got %d", len(operator.Vals))
 	}
 
-	if interface2string(operator.Vals[0]) != "42" {
+	if operator.Vals[0] != 42 {
 		t.Errorf("Expected Values()[0] 42, got %s", operator.Vals[0])
 	}
 
