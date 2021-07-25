@@ -8,7 +8,7 @@ import (
 
 func IsEqual(field string, value interface{}) Operator {
 	operator := Operator{}
-	fmt.Printf("value %s tipo %T\n", value, value)
+
 	if value != nil {
 
 		t := reflect.TypeOf(value).Kind()

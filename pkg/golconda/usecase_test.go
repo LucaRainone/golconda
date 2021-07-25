@@ -6,10 +6,12 @@ import (
 )
 
 type filters struct {
-	byEmail    interface{}
-	byName     interface{}
-	byId       interface{}
-	byLocation interface{}
+	byEmail     interface{}
+	byName      interface{}
+	byId        interface{}
+	byLocation  interface{}
+	byDateStart interface{}
+	byDateEnd   interface{}
 }
 
 // this is a real use case
@@ -22,18 +24,22 @@ func TestFullUseCase(t *testing.T) {
 	filters.byEmail = "myemail@test.it"
 	filters.byId = []int{13, 21}
 	filters.byLocation = 19
+	filters.byDateStart = "2021-01-01"
+	filters.byDateEnd = "2021-01-01"
 
 	condition.Append(
 		IsEqual("email", filters.byEmail),
-		// this trick is the scope of the
+		// this trick is the scope of the package
 		IsEqual("name", filters.byName), // <nil>, so this will not be appended
 
 		IsEqual("id", filters.byId), // Slice, so the equal operator is converted in IN operator
 		IsEqual("location", filters.byLocation),
+
+		IsBetween("date", filters.byDateStart, filters.byDateEnd),
 	)
 
 	// "name" condition should not be printed
-	expected := "(email = ? AND id IN (?,?) AND location = ?)"
+	expected := "(email = ? AND id IN (?,?) AND location = ? AND date BETWEEN ? AND ?)"
 
 	current := condition.Build()
 
@@ -42,7 +48,7 @@ func TestFullUseCase(t *testing.T) {
 	}
 
 	vals := condition.Values()
-	expectedLen := 4
+	expectedLen := 6
 	if len(vals) != expectedLen {
 		t.Errorf("Expected length o condition.Values() to be %d, got %d", expectedLen, len(vals))
 	}
@@ -62,6 +68,16 @@ func TestFullUseCase(t *testing.T) {
 	if vals[3] != filters.byLocation {
 		t.Errorf("Expected vals[3] to be %d, got %s", filters.byLocation, vals[3])
 	}
+
+	if vals[4] != filters.byDateStart {
+		t.Errorf("Expected vals[4] to be %d, got %s", filters.byDateStart, vals[4])
+	}
+
+	if vals[5] != filters.byDateEnd {
+		t.Errorf("Expected vals[5] to be %d, got %s", filters.byDateEnd, vals[5])
+	}
+
+	// TODO other vals
 
 	rawQuery := fmt.Sprintf("SELECT * FROM users WHERE %s", condition.Build())
 
