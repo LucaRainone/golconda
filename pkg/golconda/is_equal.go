@@ -8,6 +8,7 @@ import (
 
 func IsEqual(field string, value interface{}) Operator {
 	operator := Operator{}
+	fmt.Printf("value %s tipo %T\n", value, value)
 	if value != nil {
 
 		t := reflect.TypeOf(value).Kind()
@@ -18,7 +19,7 @@ func IsEqual(field string, value interface{}) Operator {
 			valuesIn := buildQuestionMark(s.Len())
 			operator.Expression = fmt.Sprintf("%s IN (%s)", field, valuesIn)
 			for i := 0; i < s.Len(); i++ {
-				_vals = append(_vals, s.Index(i))
+				_vals = append(_vals, s.Index(i).Interface())
 			}
 			operator.Vals = _vals
 		} else {

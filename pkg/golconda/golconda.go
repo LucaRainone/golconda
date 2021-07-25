@@ -28,9 +28,14 @@ func NewOr() *Condition {
 	return &c
 }
 
-func (c *Condition) Append(op Operator) *Condition {
-	c.ops = append(c.ops, op.Expression)
-	c.vals = append(c.vals, op.Vals...)
+func (c *Condition) Append(ops ...Operator) *Condition {
+	for i := 0; i < len(ops); i++ {
+		op := ops[i]
+		if op.Expression != "" {
+			c.ops = append(c.ops, op.Expression)
+			c.vals = append(c.vals, op.Vals...)
+		}
+	}
 	return c
 }
 
