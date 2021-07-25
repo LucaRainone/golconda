@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func IsEqual(field string, value interface{}) Operator {
+func isEqual(field string, value interface{}, isNot bool) Operator {
 	operator := Operator{}
 
 	if value != nil {
@@ -14,16 +14,24 @@ func IsEqual(field string, value interface{}) Operator {
 		t := reflect.TypeOf(value).Kind()
 
 		if t == reflect.Slice || t == reflect.Array {
+			sqlOperator := "IN"
+			if isNot {
+				sqlOperator = "NOT IN"
+			}
 			s := reflect.ValueOf(value)
 			_vals := make([]interface{}, 0)
 			valuesIn := buildQuestionMark(s.Len())
-			operator.Expression = fmt.Sprintf("%s IN (%s)", field, valuesIn)
+			operator.Expression = fmt.Sprintf("%s "+sqlOperator+" (%s)", field, valuesIn)
 			for i := 0; i < s.Len(); i++ {
 				_vals = append(_vals, s.Index(i).Interface())
 			}
 			operator.Vals = _vals
 		} else {
-			operator.Expression = fmt.Sprintf("%s = ?", field)
+			sqlOperator := "="
+			if isNot {
+				sqlOperator = "!="
+			}
+			operator.Expression = fmt.Sprintf("%s "+sqlOperator+" ?", field)
 			_vals := make([]interface{}, 0)
 			_vals = append(_vals, value)
 			operator.Vals = _vals
@@ -31,6 +39,14 @@ func IsEqual(field string, value interface{}) Operator {
 
 	}
 	return operator
+}
+
+func IsNotEqual(field string, value interface{}) Operator {
+	return isEqual(field, value, true)
+}
+
+func IsEqual(field string, value interface{}) Operator {
+	return isEqual(field, value, false)
 }
 
 func buildQuestionMark(n int) string {
