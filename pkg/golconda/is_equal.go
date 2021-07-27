@@ -43,10 +43,7 @@ func isEqual(field string, value interface{}, isNot bool) Operator {
 			if isNot {
 				sqlOperator = "!="
 			}
-			operator.Expression = fmt.Sprintf("%s "+sqlOperator+" ?", field)
-			_vals := make([]interface{}, 0)
-			_vals = append(_vals, value)
-			operator.Vals = _vals
+			operator = genericOperator(field, sqlOperator, value)
 		}
 
 	}

@@ -6,12 +6,15 @@ import (
 )
 
 type filters struct {
-	byEmail     interface{}
-	byName      interface{}
-	byId        interface{}
-	byLocation  interface{}
-	byDateStart interface{}
-	byDateEnd   interface{}
+	byEmail            interface{}
+	byName             interface{}
+	byId               interface{}
+	byLocation         interface{}
+	byDateStart        interface{}
+	byDateEnd          interface{}
+	byLastUpdateIsNull bool
+	byConfirmDate      bool
+	byLastUpdateStart  interface{}
 }
 
 // this is a real use case
@@ -25,7 +28,9 @@ func TestFullUseCase(t *testing.T) {
 	filters.byId = []int{13, 21}
 	filters.byLocation = 19
 	filters.byDateStart = "2021-01-01"
-	filters.byDateEnd = "2021-01-01"
+	filters.byDateEnd = "2021-01-02"
+	filters.byConfirmDate = true
+	filters.byLastUpdateStart = "2021-02-02"
 
 	condition.Append(
 		IsEqual("email", filters.byEmail),
@@ -36,10 +41,13 @@ func TestFullUseCase(t *testing.T) {
 		IsEqual("location", filters.byLocation),
 
 		IsBetween("date", filters.byDateStart, filters.byDateEnd),
+		IsNull("last_update", filters.byLastUpdateIsNull),
+		IsNotNull("confirm_date", filters.byConfirmDate),
+		IsGreaterOrEqual("last_update", filters.byLastUpdateStart),
 	)
 
 	// "name" condition should not be printed
-	expected := "(email = ? AND id IN (?,?) AND location = ? AND date BETWEEN ? AND ?)"
+	expected := "(email = ? AND id IN (?,?) AND location = ? AND date BETWEEN ? AND ? AND confirm_date IS NOT NULL AND last_update >= ?)"
 
 	current := condition.Build()
 
@@ -48,7 +56,7 @@ func TestFullUseCase(t *testing.T) {
 	}
 
 	vals := condition.Values()
-	expectedLen := 6
+	expectedLen := 7
 	if len(vals) != expectedLen {
 		t.Errorf("Expected length o condition.Values() to be %d, got %d", expectedLen, len(vals))
 	}
@@ -75,6 +83,10 @@ func TestFullUseCase(t *testing.T) {
 
 	if vals[5] != filters.byDateEnd {
 		t.Errorf("Expected vals[5] to be %d, got %s", filters.byDateEnd, vals[5])
+	}
+
+	if vals[6] != filters.byLastUpdateStart {
+		t.Errorf("Expected vals[6] to be %d, got %s", filters.byLastUpdateStart, vals[6])
 	}
 
 	rawQuery := fmt.Sprintf("SELECT * FROM users WHERE %s", condition.Build())
