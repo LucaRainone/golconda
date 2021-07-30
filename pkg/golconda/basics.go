@@ -4,12 +4,24 @@ import (
 	"fmt"
 )
 
+type Expression string
+
+func SqlExpression(exp Expression) Expression {
+	return exp
+}
+
 func genericOperator(field string, operatorString string, value interface{}) Operator {
 	operator := Operator{}
 
 	if value != nil {
-		operator.Expression = fmt.Sprintf("%s %s ?", field, operatorString)
-		operator.Vals = append(operator.Vals, value)
+		switch value.(type) {
+		case Expression:
+			operator.Expression = fmt.Sprintf("%s %s %s", field, operatorString, value)
+		default:
+			operator.Expression = fmt.Sprintf("%s %s ?", field, operatorString)
+			operator.Vals = append(operator.Vals, value)
+		}
+
 	}
 
 	return operator

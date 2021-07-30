@@ -265,3 +265,19 @@ func TestIsNotNullIgnored(t *testing.T) {
 		t.Errorf("Expected len(operator.Vals) to be %d, got %d", 0, len(operator.Vals))
 	}
 }
+
+func TestExpression(t *testing.T) {
+	expected := "field < NOW()"
+
+	var value Expression = "NOW()"
+	operator := IsLess("field", value)
+
+	if operator.Expression != expected {
+		t.Errorf("Expected %s, got %s", expected, operator.Expression)
+	}
+
+	if len(operator.Vals) != 0 {
+		t.Errorf("Expected len(operator.Vals) to be %d, got %d", 0, len(operator.Vals))
+	}
+
+}

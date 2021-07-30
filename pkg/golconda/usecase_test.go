@@ -10,6 +10,7 @@ type filters struct {
 	byName             interface{}
 	byId               interface{}
 	byLocation         interface{}
+	byDate             interface{}
 	byDateStart        interface{}
 	byDateEnd          interface{}
 	byLastUpdateIsNull bool
@@ -27,6 +28,7 @@ func TestFullUseCase(t *testing.T) {
 	filters.byEmail = "myemail@test.it"
 	filters.byId = []int{13, 21}
 	filters.byLocation = 19
+	filters.byDate = SqlExpression("NOW()")
 	filters.byDateStart = "2021-01-01"
 	filters.byDateEnd = "2021-01-02"
 	filters.byConfirmDate = true
@@ -39,7 +41,7 @@ func TestFullUseCase(t *testing.T) {
 
 		IsEqual("id", filters.byId), // Slice, so the equal operator is converted in IN operator
 		IsEqual("location", filters.byLocation),
-
+		IsEqual("date", filters.byDate),
 		IsBetween("date", filters.byDateStart, filters.byDateEnd),
 		IsNull("last_update", filters.byLastUpdateIsNull),
 		IsNotNull("confirm_date", filters.byConfirmDate),
@@ -47,7 +49,7 @@ func TestFullUseCase(t *testing.T) {
 	)
 
 	// "name" condition should not be printed
-	expected := "(email = ? AND id IN (?,?) AND location = ? AND date BETWEEN ? AND ? AND confirm_date IS NOT NULL AND last_update >= ?)"
+	expected := "(email = ? AND id IN (?,?) AND location = ? AND date = NOW() AND date BETWEEN ? AND ? AND confirm_date IS NOT NULL AND last_update >= ?)"
 
 	current := condition.Build()
 
