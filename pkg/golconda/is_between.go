@@ -6,9 +6,9 @@ func IsBetween(field string, from interface{}, to interface{}) func(paramPlaceho
 
 		if from != nil || to != nil {
 			if from == nil {
-				return IsLessOrEqual(field, to)(func() string { return "?" })
+				return IsLessOrEqual(field, to)(paramPlaceholder)
 			} else if to == nil {
-				return IsGreaterOrEqual(field, from)(func() string { return "?" })
+				return IsGreaterOrEqual(field, from)(paramPlaceholder)
 			} else {
 				operator.Expression = field + " BETWEEN " + paramPlaceholder() + " AND " + paramPlaceholder()
 				operator.Vals = append(operator.Vals, from)
