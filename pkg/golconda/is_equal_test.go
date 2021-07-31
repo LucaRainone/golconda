@@ -7,7 +7,7 @@ import (
 
 func TestIsEqual(t *testing.T) {
 	expected := "id = ?"
-	operator := IsEqual("id", 42)
+	operator := IsEqual("id", 42)(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -25,7 +25,7 @@ func TestIsEqual(t *testing.T) {
 
 func TestIsEqualWithoutValue(t *testing.T) {
 	expected := ""
-	operator := IsEqual("id", nil)
+	operator := IsEqual("id", nil)(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -39,7 +39,7 @@ func TestIsEqualWithoutValue(t *testing.T) {
 
 func TestIsEqualWithArray(t *testing.T) {
 	expected := "id IN (?,?)"
-	operator := IsEqual("id", []int{13, 21})
+	operator := IsEqual("id", []int{13, 21})(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -60,7 +60,7 @@ func TestIsEqualWithArray(t *testing.T) {
 
 func TestIsEqualWithEmptyArray(t *testing.T) {
 	expected := "FALSE"
-	operator := IsEqual("id", []int{})
+	operator := IsEqual("id", []int{})(func() string { return "?" })
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
 	}
@@ -71,7 +71,7 @@ func TestIsEqualWithEmptyArray(t *testing.T) {
 
 func TestIsNotEqual(t *testing.T) {
 	expected := "id != ?"
-	operator := IsNotEqual("id", 42)
+	operator := IsNotEqual("id", 42)(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -89,7 +89,7 @@ func TestIsNotEqual(t *testing.T) {
 
 func TestIsNotEqualWithoutValue(t *testing.T) {
 	expected := ""
-	operator := IsNotEqual("id", nil)
+	operator := IsNotEqual("id", nil)(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -103,7 +103,7 @@ func TestIsNotEqualWithoutValue(t *testing.T) {
 
 func TestIsNotEqualWithArray(t *testing.T) {
 	expected := "id NOT IN (?,?)"
-	operator := IsNotEqual("id", []int{13, 21})
+	operator := IsNotEqual("id", []int{13, 21})(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -124,7 +124,7 @@ func TestIsNotEqualWithArray(t *testing.T) {
 
 func TestIsNotEqualWithEmptyArray(t *testing.T) {
 	expected := "TRUE"
-	operator := IsNotEqual("id", []int{})
+	operator := IsNotEqual("id", []int{})(func() string { return "?" })
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
 	}

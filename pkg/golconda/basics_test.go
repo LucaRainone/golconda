@@ -4,11 +4,15 @@ import (
 	"testing"
 )
 
+func questionMarkBuilder() string {
+	return "?"
+}
+
 func TestIsLess(t *testing.T) {
 	expected := "field < ?"
 
 	value := 123
-	operator := IsLess("field", value)
+	operator := IsLess("field", value)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -27,7 +31,7 @@ func TestIsLessOrEqual(t *testing.T) {
 	expected := "field <= ?"
 
 	value := 1234
-	operator := IsLessOrEqual("field", value)
+	operator := IsLessOrEqual("field", value)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -46,7 +50,7 @@ func TestIsGreater(t *testing.T) {
 	expected := "field > ?"
 
 	value := 321
-	operator := IsGreater("field", value)
+	operator := IsGreater("field", value)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -65,7 +69,7 @@ func TestIsGreaterOrEqual(t *testing.T) {
 	expected := "field >= ?"
 
 	value := 911
-	operator := IsGreaterOrEqual("field", value)
+	operator := IsGreaterOrEqual("field", value)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -84,7 +88,7 @@ func TestIsLike(t *testing.T) {
 	expected := "field LIKE ?"
 
 	value := "abc"
-	operator := IsLike("field", value)
+	operator := IsLike("field", value)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -103,7 +107,7 @@ func TestIsNotLike(t *testing.T) {
 	expected := "field NOT LIKE ?"
 
 	value := "acb"
-	operator := IsNotLike("field", value)
+	operator := IsNotLike("field", value)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -121,7 +125,7 @@ func TestIsNotLike(t *testing.T) {
 func TestIsNull(t *testing.T) {
 	expected := "field IS NULL"
 
-	operator := IsNull("field", true)
+	operator := IsNull("field", true)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -136,7 +140,7 @@ func TestIsNull(t *testing.T) {
 func TestIsNotNull(t *testing.T) {
 	expected := "field IS NOT NULL"
 
-	operator := IsNotNull("field", true)
+	operator := IsNotNull("field", true)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -150,7 +154,7 @@ func TestIsNotNull(t *testing.T) {
 func TestIsLessIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsLess("field", nil)
+	operator := IsLess("field", nil)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -165,7 +169,7 @@ func TestIsLessIgnored(t *testing.T) {
 func TestIsLessOrEqualIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsLessOrEqual("field", nil)
+	operator := IsLessOrEqual("field", nil)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -180,7 +184,7 @@ func TestIsLessOrEqualIgnored(t *testing.T) {
 func TestIsGreaterIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsGreater("field", nil)
+	operator := IsGreater("field", nil)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -195,7 +199,7 @@ func TestIsGreaterIgnored(t *testing.T) {
 func TestIsGreaterOrEqualIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsGreaterOrEqual("field", nil)
+	operator := IsGreaterOrEqual("field", nil)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -210,7 +214,7 @@ func TestIsGreaterOrEqualIgnored(t *testing.T) {
 func TestIsLikeIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsLike("field", nil)
+	operator := IsLike("field", nil)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -225,7 +229,7 @@ func TestIsLikeIgnored(t *testing.T) {
 func TestIsNotLikeIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsNotLike("field", nil)
+	operator := IsNotLike("field", nil)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -240,7 +244,7 @@ func TestIsNotLikeIgnored(t *testing.T) {
 func TestIsNullIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsNull("field", false)
+	operator := IsNull("field", false)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -255,7 +259,7 @@ func TestIsNullIgnored(t *testing.T) {
 func TestIsNotNullIgnored(t *testing.T) {
 	expected := ""
 
-	operator := IsNotNull("field", false)
+	operator := IsNotNull("field", false)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -270,7 +274,7 @@ func TestExpression(t *testing.T) {
 	expected := "field < NOW()"
 
 	var value Expression = "NOW()"
-	operator := IsLess("field", value)
+	operator := IsLess("field", value)(questionMarkBuilder)
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)

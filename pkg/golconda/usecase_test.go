@@ -36,10 +36,8 @@ func TestFullUseCase(t *testing.T) {
 
 	condition.Append(
 		IsEqual("email", filters.byEmail),
-		// this trick is the scope of the package
 		IsEqual("name", filters.byName), // <nil>, so this will not be appended
-
-		IsEqual("id", filters.byId), // Slice, so the equal operator is converted in IN operator
+		IsEqual("id", filters.byId),     // Slice, so the equal operator is converted in IN operator
 		IsEqual("location", filters.byLocation),
 		IsEqual("date", filters.byDate),
 		IsBetween("date", filters.byDateStart, filters.byDateEnd),

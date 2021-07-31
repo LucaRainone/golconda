@@ -6,9 +6,11 @@ import (
 )
 
 type Condition struct {
-	mode string
-	ops  []string
-	vals []interface{}
+	built      bool
+	mode       string
+	ops        []string
+	vals       []interface{}
+	operations []func(paramPlaceholder func() string) Operator
 }
 
 type Operator struct {
@@ -28,18 +30,30 @@ func NewOr() *Condition {
 	return &c
 }
 
-func (c *Condition) Append(ops ...Operator) *Condition {
-	for i := 0; i < len(ops); i++ {
-		op := ops[i]
-		if op.Expression != "" {
-			c.ops = append(c.ops, op.Expression)
-			c.vals = append(c.vals, op.Vals...)
-		}
-	}
+func (c *Condition) Append(ops ...func(paramPlaceholder func() string) Operator) *Condition {
+
+	c.operations = append(c.operations, ops...)
+
 	return c
 }
 
-func (c Condition) Build() string {
+func preBuild(c *Condition) {
+	if !c.built {
+		for i := 0; i < len(c.operations); i++ {
+			operationBuilder := c.operations[i]
+			op := operationBuilder(func() string { return "?" })
+			if op.Expression != "" {
+				c.ops = append(c.ops, op.Expression)
+				c.vals = append(c.vals, op.Vals...)
+			}
+		}
+		c.built = true
+	}
+
+}
+
+func (c *Condition) Build() string {
+	preBuild(c)
 	if len(c.ops) == 0 {
 		if c.mode == "OR" {
 			return "(FALSE)"

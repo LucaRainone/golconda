@@ -10,7 +10,7 @@ func TestIsBetween(t *testing.T) {
 	from := "2021-10-01"
 	to := "2022-10-31"
 
-	operator := IsBetween("date", from, to)
+	operator := IsBetween("date", from, to)(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -33,7 +33,7 @@ func TestIsBetweenWithoutFrom(t *testing.T) {
 	expected := "date <= ?"
 
 	to := "2022-10-31"
-	operator := IsBetween("date", nil, to)
+	operator := IsBetween("date", nil, to)(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)
@@ -53,7 +53,7 @@ func TestIsBetweenWithoutTo(t *testing.T) {
 	expected := "date >= ?"
 
 	from := "2021-10-01"
-	operator := IsBetween("date", from, nil)
+	operator := IsBetween("date", from, nil)(func() string { return "?" })
 
 	if operator.Expression != expected {
 		t.Errorf("Expected %s, got %s", expected, operator.Expression)

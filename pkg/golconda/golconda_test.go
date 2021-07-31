@@ -30,7 +30,7 @@ func TestAppend(t *testing.T) {
 	operator.Expression = "somecondition"
 	operator.Vals = append(operator.Vals, 1)
 
-	c.Append(operator)
+	c.Append(func(paramPlaceholder func() string) Operator { return operator })
 
 	conditionString := c.Build()
 	if conditionString != expected {
