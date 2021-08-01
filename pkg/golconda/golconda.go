@@ -52,21 +52,17 @@ func preBuild(c *Condition) {
 
 }
 
-func (c *Condition) Build() string {
+func (c *Condition) Build() (string, []interface{}) {
 	preBuild(c)
 	if len(c.ops) == 0 {
 		if c.mode == "OR" {
-			return "(FALSE)"
+			return "(FALSE)", make([]interface{}, 0)
 		}
-		return "(TRUE)"
+		return "(TRUE)", make([]interface{}, 0)
 	}
-	return fmt.Sprintf("(%s)", strings.Join(c.ops, fmt.Sprintf(" %s ", c.mode)))
+	return fmt.Sprintf("(%s)", strings.Join(c.ops, fmt.Sprintf(" %s ", c.mode))), c.values()
 }
 
-func (c Condition) String() string {
-	return c.Build()
-}
-
-func (c *Condition) Values() []interface{} {
+func (c *Condition) values() []interface{} {
 	return c.vals
 }

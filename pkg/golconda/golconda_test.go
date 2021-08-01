@@ -7,7 +7,7 @@ import (
 func TestAndEmptyCondition(t *testing.T) {
 	expected := "(TRUE)"
 	c := NewAnd()
-	emptyCondition := c.Build()
+	emptyCondition, _ := c.Build()
 	if emptyCondition != expected {
 		t.Errorf("Expected %s, got %s", expected, emptyCondition)
 	}
@@ -17,7 +17,7 @@ func TestAndEmptyCondition(t *testing.T) {
 func TestOrEmptyCondition(t *testing.T) {
 	expected := "(FALSE)"
 	c := NewOr()
-	emptyCondition := c.Build()
+	emptyCondition, _ := c.Build()
 	if emptyCondition != expected {
 		t.Errorf("Expected %s, got %s", expected, emptyCondition)
 	}
@@ -32,12 +32,12 @@ func TestAppend(t *testing.T) {
 
 	c.Append(func(paramPlaceholder func() string) Operator { return operator })
 
-	conditionString := c.Build()
+	conditionString, values := c.Build()
 	if conditionString != expected {
 		t.Errorf("Expected %s, got %s", expected, conditionString)
 	}
 
-	if operator.Vals[0] != 1 {
-		t.Errorf("Vals: Expected %d, got %d", 1, operator.Vals[0])
+	if values[0] != 1 {
+		t.Errorf("values: Expected %d, got %d", operator.Vals[0], values[0])
 	}
 }

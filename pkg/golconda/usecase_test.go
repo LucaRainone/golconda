@@ -49,13 +49,12 @@ func TestFullUseCase(t *testing.T) {
 	// "name" condition should not be printed
 	expected := "(email = ? AND id IN (?,?) AND location = ? AND date = NOW() AND date BETWEEN ? AND ? AND confirm_date IS NOT NULL AND last_update >= ?)"
 
-	current := condition.Build()
+	current, vals := condition.Build()
 
 	if expected != current {
 		t.Errorf("Expected `%s`, got `%s`", expected, current)
 	}
 
-	vals := condition.Values()
 	expectedLen := 7
 	if len(vals) != expectedLen {
 		t.Errorf("Expected length o condition.Values() to be %d, got %d", expectedLen, len(vals))
@@ -89,7 +88,7 @@ func TestFullUseCase(t *testing.T) {
 		t.Errorf("Expected vals[6] to be %d, got %s", filters.byLastUpdateStart, vals[6])
 	}
 
-	rawQuery := fmt.Sprintf("SELECT * FROM users WHERE %s", condition.Build())
+	rawQuery := fmt.Sprintf("SELECT * FROM users WHERE %s", current)
 
 	// ok this is pretty useless to test but...
 	expectedRaw := "SELECT * FROM users WHERE " + expected
