@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-func isEqual(field string, value interface{}, isNot bool) func(paramPlaceholder func() string) Operator {
-	return func(paramPlaceholder func() string) Operator {
+func isEqual(field string, value interface{}, isNot bool) operatorBuilder {
+	return func(paramPlaceholder operatorParamBuilder) Operator {
 		operator := Operator{}
 
 		if value != nil {
@@ -52,15 +52,15 @@ func isEqual(field string, value interface{}, isNot bool) func(paramPlaceholder 
 	}
 }
 
-func IsNotEqual(field string, value interface{}) func(paramPlaceholder func() string) Operator {
+func IsNotEqual(field string, value interface{}) operatorBuilder {
 	return isEqual(field, value, true)
 }
 
-func IsEqual(field string, value interface{}) func(paramPlaceholder func() string) Operator {
+func IsEqual(field string, value interface{}) operatorBuilder {
 	return isEqual(field, value, false)
 }
 
-func buildQuestionMark(n int, paramPlaceholder func() string) string {
+func buildQuestionMark(n int, paramPlaceholder operatorParamBuilder) string {
 	s := make([]string, n)
 	for i := range s {
 		s[i] = paramPlaceholder()

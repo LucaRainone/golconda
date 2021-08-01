@@ -5,14 +5,13 @@ import (
 )
 
 type Expression string
-type operatorBuilder func(func() string) Operator
 
 func SqlExpression(exp Expression) Expression {
 	return exp
 }
 
 func genericOperator(field string, operatorString string, value interface{}) operatorBuilder {
-	return func(paramPlaceholder func() string) Operator {
+	return func(paramPlaceholder operatorParamBuilder) Operator {
 		operator := Operator{}
 
 		if value != nil {
@@ -31,7 +30,7 @@ func genericOperator(field string, operatorString string, value interface{}) ope
 }
 
 func genericExpression(field, expression string, flag bool) operatorBuilder {
-	return func(paramPlaceholder func() string) Operator {
+	return func(paramPlaceholder operatorParamBuilder) Operator {
 		operator := Operator{}
 		if flag {
 			operator.Expression = field + " " + expression

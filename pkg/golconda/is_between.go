@@ -1,7 +1,7 @@
 package golconda
 
-func IsBetween(field string, from interface{}, to interface{}) func(paramPlaceholder func() string) Operator {
-	return func(paramPlaceholder func() string) Operator {
+func IsBetween(field string, from interface{}, to interface{}) operatorBuilder {
+	return func(paramPlaceholder operatorParamBuilder) Operator {
 		operator := Operator{}
 
 		if from != nil || to != nil {

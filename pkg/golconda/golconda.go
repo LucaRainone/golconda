@@ -2,7 +2,13 @@ package golconda
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+)
+
+const (
+	PlaceholderDollar   string = "$"
+	PlaceholderQuestion string = "?"
 )
 
 type Condition struct {
@@ -10,8 +16,14 @@ type Condition struct {
 	mode       string
 	ops        []string
 	vals       []interface{}
-	operations []func(paramPlaceholder func() string) Operator
+	operations []operatorBuilder
 }
+
+type operatorParamBuilder func() string
+
+type operatorBuilder func(operatorParamBuilder) Operator
+
+var currentPlaceholderMethod = PlaceholderQuestion
 
 type Operator struct {
 	Expression string
@@ -30,7 +42,11 @@ func NewOr() *Condition {
 	return &c
 }
 
-func (c *Condition) Append(ops ...func(paramPlaceholder func() string) Operator) *Condition {
+func SetPlaceholder(pl string) {
+	currentPlaceholderMethod = pl
+}
+
+func (c *Condition) Append(ops ...operatorBuilder) *Condition {
 
 	c.operations = append(c.operations, ops...)
 
@@ -39,9 +55,19 @@ func (c *Condition) Append(ops ...func(paramPlaceholder func() string) Operator)
 
 func preBuild(c *Condition) {
 	if !c.built {
+		index := 0
+		var placeholder operatorParamBuilder = func() string {
+			return currentPlaceholderMethod
+		}
+		if currentPlaceholderMethod == PlaceholderDollar {
+			placeholder = func() string {
+				index++
+				return PlaceholderDollar + strconv.Itoa(index)
+			}
+		}
 		for i := 0; i < len(c.operations); i++ {
 			operationBuilder := c.operations[i]
-			op := operationBuilder(func() string { return "?" })
+			op := operationBuilder(placeholder)
 			if op.Expression != "" {
 				c.ops = append(c.ops, op.Expression)
 				c.vals = append(c.vals, op.Vals...)
