@@ -7,43 +7,64 @@ import (
 )
 
 const (
-	PlaceholderDollar   string = "$"
-	PlaceholderQuestion string = "?"
+	PlaceholderDollar       string = "$"
+	PlaceholderQuestionMark string = "?"
 )
 
 type Condition struct {
-	built      bool
-	mode       string
-	ops        []string
-	vals       []interface{}
-	operations []operatorBuilder
+	built       bool
+	mode        string
+	placeholder string
+	ops         []string
+	vals        []interface{}
+	operations  []operatorBuilder
 }
 
 type operatorParamBuilder func() string
 
 type operatorBuilder func(operatorParamBuilder) Operator
 
-var currentPlaceholderMethod = PlaceholderQuestion
-
 type Operator struct {
 	Expression string
 	Vals       []interface{}
 }
 
+type GolcondaBuilderType struct {
+}
+
+type golcondaBuilderApi struct {
+	NewAnd func() *Condition
+	NewOr  func() *Condition
+}
+
+func (builder *GolcondaBuilderType) PlaceholderFormat(placeholderFormat string) *golcondaBuilderApi {
+	api := golcondaBuilderApi{}
+
+	api.NewAnd = func() *Condition {
+		c := Condition{}
+		c.mode = "AND"
+		c.placeholder = placeholderFormat
+		return &c
+	}
+
+	api.NewOr = func() *Condition {
+		c := Condition{}
+		c.mode = "OR"
+		c.placeholder = placeholderFormat
+		return &c
+	}
+
+	return &api
+}
+
+var GolcondaBuilder GolcondaBuilderType = GolcondaBuilderType{}
+
+// defaults
 func NewAnd() *Condition {
-	c := Condition{}
-	c.mode = "AND"
-	return &c
+	return GolcondaBuilder.PlaceholderFormat(PlaceholderQuestionMark).NewAnd()
 }
-
 func NewOr() *Condition {
-	c := Condition{}
-	c.mode = "OR"
-	return &c
-}
-
-func SetPlaceholder(pl string) {
-	currentPlaceholderMethod = pl
+	return GolcondaBuilder.PlaceholderFormat(PlaceholderQuestionMark).NewOr()
 }
 
 func (c *Condition) Append(ops ...operatorBuilder) *Condition {
@@ -57,9 +78,9 @@ func preBuild(c *Condition) {
 	if !c.built {
 		index := 0
 		var placeholder operatorParamBuilder = func() string {
-			return currentPlaceholderMethod
+			return c.placeholder
 		}
-		if currentPlaceholderMethod == PlaceholderDollar {
+		if c.placeholder == PlaceholderDollar {
 			placeholder = func() string {
 				index++
 				return PlaceholderDollar + strconv.Itoa(index)
