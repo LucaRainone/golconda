@@ -4,7 +4,7 @@
 
 This is my first attempt with Golang, so I trained myself with a porting of my [Condition-builder](https://github.com/LucaRainone/condition-builder) in PHP.
 
-Due the fact this is a try, feel free to help me to understand the basics of Go if you see mistakes or best practice violations. Thanks.
+Due the fact this is a try, feel free to help me to understand the basics of Go ~~if~~ when you see mistakes or best practice violations. Thanks.
 
 ## What
 
