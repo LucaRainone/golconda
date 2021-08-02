@@ -60,4 +60,12 @@ func main() {
 
 ```
 
+What if we want to filter by expression?
+
+```go
+
+filters.byDateStart = golconda.SqlExpression("NOW()")
+
+```
+
 That's all.
