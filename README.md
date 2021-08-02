@@ -60,11 +60,26 @@ func main() {
 
 ```
 
-What if we want to filter by expression?
+What if we want to filter by expressions?
 
 ```go
 
 filters.byDateStart = golconda.SqlExpression("NOW()")
+
+```
+
+What if we want to use Postgres?
+
+```go
+
+golcondaP := golconda.GolcondaBuilder.PlaceholderFormat(golconda.PlaceholderDollar)
+
+c := golcondaP.NewAnd()
+c.Append(golconda.IsEqual("id", 23))
+query, values := c.Build()
+
+fmt.Printf("%s -> %v", query, values)
+// (id = $1) -> [23]
 
 ```
 
