@@ -28,7 +28,7 @@ func isEqual(field string, value interface{}, isNot bool) operatorBuilder {
 						operator.Expression = "FALSE"
 					}
 				} else {
-					_vals := make([]interface{}, 0)
+					_vals := make([]interface{}, 0, s.Len()) // sets capacity upfront to avoid extra allocations in the for loop
 
 					valuesIn := buildQuestionMark(s.Len(), paramPlaceholder)
 					operator.Expression = fmt.Sprintf("%s "+sqlOperator+" (%s)", field, valuesIn)
