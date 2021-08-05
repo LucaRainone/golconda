@@ -57,6 +57,16 @@ func (builder *GolcondaBuilderType) PlaceholderFormat(placeholderFormat string) 
 	return &api
 }
 
+func (condition *Condition) AsOperator() operatorBuilder {
+	return func(opb operatorParamBuilder) Operator {
+		operator := Operator{}
+		expression, values := condition.Build()
+		operator.Expression = expression
+		operator.Vals = values
+		return operator
+	}
+}
+
 var GolcondaBuilder GolcondaBuilderType = GolcondaBuilderType{}
 
 // defaults

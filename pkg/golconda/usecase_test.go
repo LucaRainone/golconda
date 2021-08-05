@@ -34,6 +34,12 @@ func TestFullUseCase(t *testing.T) {
 	filters.byConfirmDate = true
 	filters.byLastUpdateStart = "2021-02-02"
 
+	subCondition := NewOr()
+	subCondition.Append(
+		IsEqual("confirmed", 1),
+		IsEqual("waiting", 2),
+	)
+
 	condition.Append(
 		IsEqual("email", filters.byEmail),
 		IsEqual("name", filters.byName), // <nil>, so this will not be appended
@@ -44,10 +50,11 @@ func TestFullUseCase(t *testing.T) {
 		IsNull("last_update", filters.byLastUpdateIsNull),
 		IsNotNull("confirm_date", filters.byConfirmDate),
 		IsGreaterOrEqual("last_update", filters.byLastUpdateStart),
+		subCondition.AsOperator(),
 	)
 
 	// "name" condition should not be printed
-	expected := "(email = ? AND id IN (?,?) AND location = ? AND date = NOW() AND date BETWEEN ? AND ? AND confirm_date IS NOT NULL AND last_update >= ?)"
+	expected := "(email = ? AND id IN (?,?) AND location = ? AND date = NOW() AND date BETWEEN ? AND ? AND confirm_date IS NOT NULL AND last_update >= ? AND (confirmed = ? OR waiting = ?))"
 
 	current, vals := condition.Build()
 
@@ -55,7 +62,7 @@ func TestFullUseCase(t *testing.T) {
 		t.Errorf("Expected `%s`, got `%s`", expected, current)
 	}
 
-	expectedLen := 7
+	expectedLen := 9
 	if len(vals) != expectedLen {
 		t.Errorf("Expected length o condition.Values() to be %d, got %d", expectedLen, len(vals))
 	}
@@ -86,6 +93,14 @@ func TestFullUseCase(t *testing.T) {
 
 	if vals[6] != filters.byLastUpdateStart {
 		t.Errorf("Expected vals[6] to be %d, got %s", filters.byLastUpdateStart, vals[6])
+	}
+
+	if vals[7] != 1 {
+		t.Errorf("Expected vals[6] to be %d, got %s", 1, vals[7])
+	}
+
+	if vals[8] != 2 {
+		t.Errorf("Expected vals[6] to be %d, got %s", 2, vals[8])
 	}
 
 	rawQuery := fmt.Sprintf("SELECT * FROM users WHERE %s", current)

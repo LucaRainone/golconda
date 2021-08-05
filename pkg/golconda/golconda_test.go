@@ -41,3 +41,24 @@ func TestAppend(t *testing.T) {
 		t.Errorf("values: Expected %d, got %d", operator.Vals[0], values[0])
 	}
 }
+
+func TestAppendCondition(t *testing.T) {
+	expected := "(somecondition AND (anothercondition OR other))"
+	c := NewAnd()
+	operator := Operator{}
+	operator.Expression = "somecondition"
+
+	sub := NewOr()
+	operatorSub := Operator{}
+	operatorSub.Expression = "anothercondition OR other"
+	operatorSub.Vals = append(operatorSub.Vals, 1)
+	sub.Append(func(paramPlaceholder operatorParamBuilder) Operator { return operatorSub })
+
+	c.Append(func(paramPlaceholder operatorParamBuilder) Operator { return operator }, sub.AsOperator())
+
+	conditionString, _ := c.Build()
+	if conditionString != expected {
+		t.Errorf("Expected %s, got %s", expected, conditionString)
+	}
+
+}
