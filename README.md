@@ -18,7 +18,7 @@ this is a full example
 package main
 
 import (
-    "LucaRainone/golconda/pkg/golconda"
+    "LucaRainone/golconda"
     "fmt"
 )
 
@@ -74,7 +74,7 @@ What if we have multiple conditions?
 condition := golconda.NewAnd()
 subCondition := golconda.NewOr()
 // [... fill your conditions]
- 
+
 c.Append(subCondition.AsOperator())
 
 ```
