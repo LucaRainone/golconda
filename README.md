@@ -68,6 +68,17 @@ filters.byDateStart = golconda.SqlExpression("NOW()")
 
 ```
 
+What if we have multiple conditions?
+
+```go
+condition := golconda.NewAnd()
+subCondition := golconda.NewOr()
+// [... fill your conditions]
+ 
+c.Append(subCondition.AsOperator())
+
+```
+
 What if we want to use Postgres?
 
 ```go
